@@ -4,9 +4,8 @@ import torch
 import torch.nn as nn
 class SDFA(nn.Module):
 
-    def __init__(self, in_channels, reduction=8, kernel_size=7, init_cfg=None):
-        super().__init__(init_cfg=init_cfg)
-
+    def __init__(self, in_channels, reduction=8, kernel_size=7):
+        super(SDFA, self).__init__()
         self.in_channels = in_channels
         self.reduction = reduction
         self.kernel_size = kernel_size
@@ -49,3 +48,8 @@ class SDFA(nn.Module):
         M_final = self.sigmoid(M_sal_raw + M_deg_raw)
 
         return x * M_final
+    
+
+if __name__ == '__main__':
+    model = SDFA(in_channels=64, reduction=8, kernel_size=7)
+    output = model(torch.randn(3, 64, 128, 128))
