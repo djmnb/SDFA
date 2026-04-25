@@ -1,46 +1,48 @@
 # SDFA: Spectral-Spatial Degradation Fusion Attention for Underwater Object Detection
 
-SDFA 是一种受物理特性启发的注意力模块，专门用于解决复杂水下介质中的光学退化（衰减与模糊）问题。通过构建**空间-频率双流协同架构**，SDFA 能够有效地从严重的背景噪声中重构出鲁棒的特征表示。
+SDFA is a physics-inspired attention module specifically designed to tackle optical degradation (attenuation and blurring) in complex underwater media. By constructing a **spatial-frequency dual-stream synergistic architecture**, SDFA effectively reconstructs robust feature representations from severe background noise.
 
-## 🏗️ 网络架构 (Network Architecture) 
+## 🏗️ Network Architecture 
 
-SDFA 是一个轻量化的即插即用单元。为了最大化利用高层语义引导底层特征重构，我们建议将其部署在 **FPN (Feature Pyramid Network) 的输出后**。 下述为 SDFA 集成在 FCOS 框架下的示意图： ![Model Architecture of FCOS with SDFA. SDFA is placed after FPN outputs to compensate for details.](img/Figure_1.png)
+SDFA is a lightweight, plug-and-play unit. To maximize the use of high-level semantics to guide the reconstruction of low-level features, we recommend deploying it **after the output of the FPN (Feature Pyramid Network)**. The figure below illustrates the integration of SDFA within the FCOS framework:
 
-## 🔍 核心动机
+![Model Architecture of FCOS with SDFA. SDFA is placed after FPN outputs to compensate for details.](img/Figure_1.png)
 
-传统注意力机制主要依赖空间强度的统计聚合，在低信噪比（SNR）的水下环境中，往往难以区分**高强度的散射噪声**与**微弱的目标信号**。
+## 🔍 Core Motivation
 
-**SDFA 通过以下双流设计解决该挑战：**
+Traditional attention mechanisms primarily rely on the statistical aggregation of spatial intensity. However, in underwater environments with low Signal-to-Noise Ratios (SNR), it is often difficult to distinguish between **high-intensity scattering noise** and **weak target signals**.
 
-- **空间域 (Spatial Domain)**：引入**局部标准差 (Local Standard Deviation)** 机制，将精细的纹理信息从平滑的背景中脱耦，从而精准抑制焦散干扰（Caustic Interference）。
-- **频率域 (Frequency Domain)**：利用**傅里叶分析 (Fourier Analysis)** 显式建模水下介质退化的光谱特性。通过自适应重校准机制，补偿被水体过滤掉的高频语义细节。
+**SDFA addresses this challenge through the following dual-stream design:**
+
+- **Spatial Domain**: Introduces a **Local Standard Deviation** mechanism to decouple fine texture information from smooth backgrounds, thereby precisely suppressing Caustic Interference.
+- **Frequency Domain**: Utilizes **Fourier Analysis** to explicitly model the spectral characteristics of underwater media degradation. Through an adaptive recalibration mechanism, it compensates for high-frequency semantic details filtered out by the water body.
 
 ------
 
-## ✨ 技术亮点
+## ✨ Technical Highlights
 
-- **物理启发 (Physics-informed)**：基于水下光传播物理模型设计，具备极强的解释性。
-- **跨域协同 (Cross-domain Synergy)**：结合了空间特征脱耦与频域频谱重校准的优势。
-- **特征补偿 (Feature Compensation)**：不同于传统的特征加权，SDFA 侧重于重构并修复丢失的语义信息。
-- **通用且即插即用**：作为一个轻量化单元，可无缝集成至 FCOS、YOLO 系列等主流检测器的 Neck 部分（建议放在 FPN 输出之后）。
+- **Physics-Informed**: Designed based on the physical model of underwater light propagation, offering strong interpretability.
+- **Cross-Domain Synergy**: Beautifully combines the advantages of spatial feature decoupling and frequency-domain spectral recalibration.
+- **Feature Compensation**: Unlike traditional feature weighting, SDFA focuses on actively reconstructing and restoring lost semantic information.
+- **Universal & Plug-and-Play**: As a lightweight unit, it can be seamlessly integrated into the Neck part of mainstream detectors (such as FCOS and the YOLO series) with negligible computational overhead (recommended after FPN outputs).
 
-## 📈 可视化对比
+## 📈 Visual Comparisons
 
-### 检测对比
+### Detection Results
 
-通过引入 SDFA，模型在极端浑浊和低信噪比环境下的检测性能得到了显著增强。从左往右依次是真实标签, 基线模型, 加入SDFA的基线模型
+By introducing SDFA, the detection robustness of the model in extremely turbid and low-SNR environments is significantly enhanced. (From left to right: Ground Truth, Baseline Predictions, **Baseline + SDFA Predictions**)
 
 ![检测效果对比](img/Figure_2.jpg)
 
-### 特征图对比
+### Feature Map Comparison
 
-特征图可视化证明了 SDFA 能够有效地从背景噪声中区分出目标信号，并对缺失特征进行补偿。
+The feature map visualizations demonstrate that SDFA can effectively distinguish target signals from complex background noise and compensate for missing features.
 
 ![检测效果对比](img/Figure_3.jpg)
 
-## 📊 实验数据 (Quantitative Results)
+## 📊 Quantitative Results 
 
-
+We conducted extensive ablation and comparative experiments across multiple mainstream architectures. The results indicate that **whether for one-stage, two-stage, or YOLO series detectors, SDFA consistently delivers stable and significant performance leaps.**
 
 | **Detector**             | **AP**   | **AP50** | **AP75** | **APS**  | **APM**  | **APL**  |
 | ------------------------ | -------- | -------- | -------- | -------- | -------- | -------- |
@@ -69,3 +71,20 @@ SDFA 是一个轻量化的即插即用单元。为了最大化利用高层语义
 | Dynamic YOLO             | 68.2     | 86.1     | 75.2     | 52.1     | 70.0     | 66.8     |
 | **w/ SDFA **             | **68.7** | **86.9** | **75.5** | **53.0** | **70.4** | **67.5** |
 
+## 🚀 Quick Start 
+
+```python
+import torch
+from sdfa import SDFA_
+
+# Assuming the input feature map from FPN has the shape [Batch, Channels, Height, Width]
+x = torch.randn(2, 256, 64, 64)
+
+# Instantiate the SDFA module
+sdfa = SDFA_Module(in_channels=256)
+
+# Enhance the features using SDFA
+out = sdfa(x)
+
+print(out.shape) # Output: [2, 256, 64, 64]
+```
