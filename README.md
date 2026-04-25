@@ -42,7 +42,7 @@ The feature map visualizations demonstrate that SDFA can effectively distinguish
 
 ## 📊 Quantitative Results 
 
-We conducted extensive ablation and comparative experiments across multiple mainstream architectures. The results indicate that **whether for one-stage, two-stage, or YOLO series detectors, SDFA consistently delivers stable and significant performance leaps.**
+We conducted extensive ablation and comparative experiments on several mainstream architectures using the DUO dataset. **The results demonstrate that SDFA delivers stable and significant performance gains across one-stage, two-stage, and YOLO-series detectors.**
 
 | **Detector**             | **AP**   | **AP50** | **AP75** | **APS**  | **APM**  | **APL**  |
 | ------------------------ | -------- | -------- | -------- | -------- | -------- | -------- |
