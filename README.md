@@ -38,7 +38,7 @@ By introducing SDFA, the detection robustness of the model in extremely turbid a
 
 The feature map visualizations demonstrate that SDFA can effectively distinguish target signals from complex background noise and compensate for missing features.
 
-![检测效果对比](img/Figure_3.jpg)
+![检测效果对比](img/Figure_4.jpg)
 
 ## 📊 Quantitative Results 
 
