@@ -30,9 +30,9 @@ Traditional attention mechanisms primarily rely on the statistical aggregation o
 
 ### Detection Results
 
-By introducing SDFA, the detection robustness of the model in extremely turbid and low-SNR environments is significantly enhanced. (From left to right: Ground Truth, Baseline Predictions, **Baseline + SDFA Predictions**)
+By introducing SDFA, the detection robustness of the model in extremely turbid and low-SNR environments is significantly enhanced. (From left to right: Ground Truth, Baseline Predictions, Baseline+ EMA **Baseline + SDFA Predictions**)
 
-![检测效果对比](img/Figure_2.jpg)
+![检测效果对比](img/Figure_2.png)
 
 ### Feature Map Comparison
 
@@ -74,17 +74,5 @@ We conducted extensive ablation and comparative experiments on several mainstrea
 ## 🚀 Quick Start 
 
 ```python
-import torch
-from sdfa import SDFA
-
-# Assuming the input feature map from FPN has the shape [Batch, Channels, Height, Width]
-x = torch.randn(2, 256, 64, 64)
-
-# Instantiate the SDFA module
-sdfa = SDFA_Module(in_channels=256)
-
-# Enhance the features using SDFA
-out = sdfa(x)
-
-print(out.shape) # Output: [2, 256, 64, 64]
+python tools/train.py configs/fcos_underwater/FPN_SDFA_duo.py
 ```
